@@ -1,5 +1,3 @@
---[[ InventoryService (slot-based) ]]
-
 local PlayerDataManager = require(game.ServerScriptService.Data.PlayerDataManager)
 print("[InventoryService] Module loaded")
 
@@ -105,7 +103,7 @@ function InventoryService:GetFullInventory(player)
 			InventorySlots = {},
 			EquippedSlots = {},
 			InventoryCapacity = 50,
-		EquipCapacity = 3,
+			EquipCapacity = 3,
 		}
 	end
 

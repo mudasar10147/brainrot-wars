@@ -1,8 +1,6 @@
---[[ InventoryController.lua
-    This is the client controller for the inventory system.
-    It is responsible for the client side of the inventory system.
-    It is responsible for the client side of the inventory system.
-]]
+-- =================================
+-- Made by 🎓Cecle Dev and MajorVox
+-- =================================
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -14,6 +12,7 @@ local character = player.Character or player.CharacterAdded:Wait()
 
 local Brainrots = require(ReplicatedStorage.Modules.Brainrots.Brainrots)
 local MergeMap = require(ReplicatedStorage.Config.MergeMap)
+local BrainrotStats = require(ReplicatedStorage.Config.BrainrotStats)
 
 local Events = ReplicatedStorage:WaitForChild("Events")
 local OpenMergeUIEvent = Events:WaitForChild("OpenMergeUI")
@@ -156,7 +155,7 @@ local function startDrag(button, input)
 
 	local clone = button:Clone()
 	clone.Name = "DragClone"
-	clone.AnchorPoint = button.AnchorPoint
+	clone.AnchorPoint = Vector2.new(0, 0)
 	clone.ZIndex = 1000
 	clone.BackgroundTransparency = 0.5
 	clone.Size = UDim2.fromOffset(button.AbsoluteSize.X, button.AbsoluteSize.Y)
@@ -164,7 +163,7 @@ local function startDrag(button, input)
 		button.AbsolutePosition.X - inventoryUI.AbsolutePosition.X,
 		button.AbsolutePosition.Y - inventoryUI.AbsolutePosition.Y
 	)
-	-- Parent the drag clone to a GuiObject so AbsolutePosition is valid.
+	-- Parent the drag clone to PlayerGui so UI layout in your inventory frames doesn't reflow.
 	currentDragState.dragParentAbs = inventoryUI.AbsolutePosition
 	clone.Parent = inventoryUI
 
@@ -335,29 +334,29 @@ UserInputService.InputEnded:Connect(function(input)
 					end
 				end
 			else
-				local success, msg = MoveBrainrot:InvokeServer(sourceLocation, sourceIndex, targetLocation, targetIndex)
+				local success, msg, updatedData = MoveBrainrot:InvokeServer(sourceLocation, sourceIndex, targetLocation, targetIndex)
 				if not success then
 					warn("[DROP] Move failed:", msg)
 				else
-					task.wait(0.2)
-					local inv, eq, invCap, eqCap = refreshInventory()
+					local inv = updatedData and updatedData.InventorySlots or {}
+					local eq = updatedData and updatedData.EquippedSlots or {}
+					local invCap = updatedData and updatedData.InventoryCapacity or 50
+					local eqCap = updatedData and updatedData.EquipCapacity or 3
 					populateInventory(inv, eq, invCap, eqCap)
 					if _G.RefreshHotbar then _G.RefreshHotbar() end
 				end
 			end
 		else
 			-- All other combinations are slot moves/swaps via the server.
-			if not isOccupied(sourceId) then
-				warn("[DROP FAILED] Source slot is empty")
-			else
-				local success, msg = MoveBrainrot:InvokeServer(sourceLocation, sourceIndex, targetLocation, targetIndex)
+			if not isOccupied(targetId) then
+				local success, msg, updatedData = MoveBrainrot:InvokeServer(sourceLocation, sourceIndex, targetLocation, targetIndex)
 				if success then
-					task.wait(0.2)
-					local inv, eq, invCap, eqCap = refreshInventory()
+					local inv = updatedData and updatedData.InventorySlots or {}
+					local eq = updatedData and updatedData.EquippedSlots or {}
+					local invCap = updatedData and updatedData.InventoryCapacity or 50
+					local eqCap = updatedData and updatedData.EquipCapacity or 3
 					populateInventory(inv, eq, invCap, eqCap)
 					if _G.RefreshHotbar then _G.RefreshHotbar() end
-				else
-					warn("[DROP] Move failed:", msg)
 				end
 			end
 		end
@@ -458,7 +457,14 @@ function populateInventory(inventorySlots, equippedSlots, storageCapacity, equip
 			local brainrotData = Brainrots[brainrotId]
 			if brainrotData then
 				if nameLabel then nameLabel.Text = brainrotData.Name end
-				if mutationLabel then mutationLabel.Text = brainrotData.Rarity end
+				if mutationLabel then
+					local stats = BrainrotStats.GetStats(brainrotId)
+					if stats and stats.Tier then
+						mutationLabel.Text = stats.Tier
+					else
+						mutationLabel.Text = brainrotData.Rarity or "Unknown"
+					end
+				end
 				if image then image.Image = brainrotData.Icon end
 			end
 			button.AutoButtonColor = true
@@ -496,7 +502,14 @@ function populateInventory(inventorySlots, equippedSlots, storageCapacity, equip
 				local brainrotData = Brainrots[equippedId]
 				if brainrotData then
 					if nameLabel then nameLabel.Text = brainrotData.Name end
-					if mutationLabel then mutationLabel.Text = brainrotData.Rarity end
+					if mutationLabel then
+						local stats = BrainrotStats.GetStats(equippedId)
+						if stats and stats.Tier then
+							mutationLabel.Text = stats.Tier
+						else
+							mutationLabel.Text = brainrotData.Rarity or "Unknown"
+						end
+					end
 					if image then image.Image = brainrotData.Icon end
 				end
 
@@ -534,27 +547,25 @@ cancelButton.MouseButton1Click:Connect(function()
 	confirmationUI.Enabled = false
 	inventoryUI.Enabled = true
 	selectedLockedButton = nil
+	_G.RequestSlotPurchase = false
 end)
 
 -- ===============================
 -- BuyButton click handler
 -- ===============================
 buyButton.MouseButton1Click:Connect(function()
-	if not selectedLockedButton then return end
+	if not selectedLockedButton and not _G.RequestSlotPurchase then return end
 
 	confirmationUI.Enabled = false
 	inventoryUI.Enabled = true
 
-	-- Unlock one additional equipped slot on the server.
-	local ok, err = pcall(function()
-		PurchaseSlot:FireServer()
-	end)
+	local ok = PurchaseSlot:InvokeServer()
 	if not ok then
-		warn("[InventoryController] PurchaseSlot failed:", tostring(err))
+		warn("[InventoryController] PurchaseSlot failed or already at max")
 	end
 
 	selectedLockedButton = nil
-	task.wait(0.2)
+	_G.RequestSlotPurchase = false
 	if _G.PopulateInventory then _G.PopulateInventory() end
 end)
 
@@ -564,6 +575,7 @@ end)
 _G.PopulateInventory = function()
 	local inv, eq, invCap, eqCap = refreshInventory()
 	populateInventory(inv, eq, invCap, eqCap)
+	if _G.RefreshAllTeams then _G.RefreshAllTeams(eqCap) end
 end
 
 ------------------------------------------------

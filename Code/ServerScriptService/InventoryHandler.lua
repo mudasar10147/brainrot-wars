@@ -24,7 +24,7 @@ UnequipBrainrot.Name = "UnequipBrainrot"
 UnequipBrainrot.Parent = Remotes
 
 -- Unlock one additional equipped slot (up to 7 total).
-local PurchaseSlot = Instance.new("RemoteEvent")
+local PurchaseSlot = Instance.new("RemoteFunction")
 PurchaseSlot.Name = "PurchaseSlot"
 PurchaseSlot.Parent = Remotes
 
@@ -132,19 +132,20 @@ local function syncEquippedTools(player)
 end
 
 -- === Purchase/unlock equip slot ===
-PurchaseSlot.OnServerEvent:Connect(function(player)
+PurchaseSlot.OnServerInvoke = function(player)
 	local data = PlayerDataManager:Get(player)
-	if not data then return end
+	if not data then return false end
 
 	local TOTAL_EQUIPPED_SLOTS = 7
 	local current = InventoryService:GetEquipCapacity(player) or data.EquipCapacity or 3
 	if current >= TOTAL_EQUIPPED_SLOTS then
-		return
+		return false
 	end
 
 	PlayerDataManager:SetEquipCapacity(player, math.min(TOTAL_EQUIPPED_SLOTS, current + 1))
 	syncEquippedTools(player)
-end)
+	return true
+end
 
 -- === Auto Equip on Join ===
 local function autoEquipOnJoin(player)
@@ -200,9 +201,16 @@ end
 MoveBrainrot.OnServerInvoke = function(player, sourceLocation, sourceSlotIndex, targetLocation, targetSlotIndex)
 	local success, msg = InventoryService:MoveBrainrot(player, sourceLocation, sourceSlotIndex, targetLocation, targetSlotIndex)
 	if success then
-		syncEquippedTools(player)
+		task.spawn(syncEquippedTools, player)
+		local updatedData = {
+			InventorySlots = InventoryService:GetInventorySlots(player) or {},
+			EquippedSlots = InventoryService:GetEquippedSlots(player) or {},
+			InventoryCapacity = InventoryService:GetStorageCapacity(player) or 50,
+			EquipCapacity = InventoryService:GetEquipCapacity(player) or 3
+		}
+		return success, msg, updatedData
 	end
-	return success, msg
+	return success, msg, nil
 end
 
 -- === Equip Brainrot ===

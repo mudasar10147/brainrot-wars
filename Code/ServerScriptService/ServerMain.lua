@@ -1,4 +1,4 @@
-local Players = game:GetService("Players")
+ServerMainlocal Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local DataStoreHandler = require(script.Parent.Data.DataStoreServiceHandler)
 local PlayerDataManager = require(script.Parent.Data.PlayerDataManager)

@@ -1,9 +1,3 @@
---[[Module: PlayerDataManager.lua
-    This is the module for the player data manager.
-    It is responsible for the server side of the player data manager.
-    It is responsible for the server side of the player data manager.
-]]
-
 local PlayerDataManager = {}
 
 print("[PlayerDataManager] Module loaded")

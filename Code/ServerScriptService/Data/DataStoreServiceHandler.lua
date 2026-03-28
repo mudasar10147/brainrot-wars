@@ -1,9 +1,3 @@
---[[DataStoreServiceHandler.lua
-    This is the module for the data store service handler.
-    It is responsible for the server side of the data store service handler.
-    It is responsible for the server side of the data store service handler.
-]]
-
 local DataStoreService = game:GetService("DataStoreService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")

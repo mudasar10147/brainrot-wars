@@ -1,9 +1,3 @@
---[[ MergeController.lua
-    This is the client controller for the merge system.
-    It is responsible for the client side of the merge system.
-    It is responsible for the client side of the merge system.
-]]
-
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 

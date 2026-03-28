@@ -1,0 +1,320 @@
+local BrainrotStats = {
+	-- COMMON (Display names)
+	["Banana Dancana"] = {
+		Tier = "Common",
+		Health = 100,
+		Damage = 15,
+		Resistance = 5,
+		Endurance = 50,
+	},
+	["Pandaccini Bananini"] = {
+		Tier = "Common",
+		Health = 120,
+		Damage = 18,
+		Resistance = 6,
+		Endurance = 55,
+	},
+	["Nyannini Cattalini"] = {
+		Tier = "Common",
+		Health = 90,
+		Damage = 20,
+		Resistance = 4,
+		Endurance = 60,
+	},
+	["Pipi Potato"] = {
+		Tier = "Common",
+		Health = 130,
+		Damage = 12,
+		Resistance = 8,
+		Endurance = 45,
+	},
+	["Tim Cheese"] = {
+		Tier = "Common",
+		Health = 110,
+		Damage = 17,
+		Resistance = 7,
+		Endurance = 52,
+	},
+	["Chillin Chili"] = {
+		Tier = "Common",
+		Health = 140,
+		Damage = 22,
+		Resistance = 9,
+		Endurance = 48,
+	},
+	-- COMMON (IDs for lookup)
+	["BananaDancana"] = {
+		Tier = "Common",
+		Health = 100,
+		Damage = 15,
+		Resistance = 5,
+		Endurance = 50,
+	},
+	["PandacciniBananini"] = {
+		Tier = "Common",
+		Health = 120,
+		Damage = 18,
+		Resistance = 6,
+		Endurance = 55,
+	},
+	["NyanniniCattalini"] = {
+		Tier = "Common",
+		Health = 90,
+		Damage = 20,
+		Resistance = 4,
+		Endurance = 60,
+	},
+	["PipiPotato"] = {
+		Tier = "Common",
+		Health = 130,
+		Damage = 12,
+		Resistance = 8,
+		Endurance = 45,
+	},
+	["TimCheese"] = {
+		Tier = "Common",
+		Health = 110,
+		Damage = 17,
+		Resistance = 7,
+		Endurance = 52,
+	},
+	["ChillinChili"] = {
+		Tier = "Common",
+		Health = 140,
+		Damage = 22,
+		Resistance = 9,
+		Endurance = 48,
+	},
+	-- UNCOMMON (Display names - 2 different commons merged)
+	["Bananaccini Supremo"] = {
+		Tier = "Uncommon",
+		Health = 200,
+		Damage = 30,
+		Resistance = 12,
+		Endurance = 80,
+	},
+	["Banana Nyaneroni"] = {
+		Tier = "Uncommon",
+		Health = 185,
+		Damage = 32,
+		Resistance = 11,
+		Endurance = 78,
+	},
+	["Bananito Potatino"] = {
+		Tier = "Uncommon",
+		Health = 210,
+		Damage = 25,
+		Resistance = 14,
+		Endurance = 75,
+	},
+	["Pandaccini Formaggi"] = {
+		Tier = "Uncommon",
+		Health = 195,
+		Damage = 28,
+		Resistance = 13,
+		Endurance = 82,
+	},
+	["Cattalini Chilini"] = {
+		Tier = "Uncommon",
+		Health = 190,
+		Damage = 35,
+		Resistance = 10,
+		Endurance = 85,
+	},
+	["Chillin Formaggino"] = {
+		Tier = "Uncommon",
+		Health = 220,
+		Damage = 33,
+		Resistance = 15,
+		Endurance = 80,
+	},
+	-- UNCOMMON (IDs for lookup)
+	["BananacciniSupremo"] = {
+		Tier = "Uncommon",
+		Health = 200,
+		Damage = 30,
+		Resistance = 12,
+		Endurance = 80,
+	},
+	["BananaNyaneroni"] = {
+		Tier = "Uncommon",
+		Health = 185,
+		Damage = 32,
+		Resistance = 11,
+		Endurance = 78,
+	},
+	["BananitoPotatino"] = {
+		Tier = "Uncommon",
+		Health = 210,
+		Damage = 25,
+		Resistance = 14,
+		Endurance = 75,
+	},
+	["PandacciniFormaggi"] = {
+		Tier = "Uncommon",
+		Health = 195,
+		Damage = 28,
+		Resistance = 13,
+		Endurance = 82,
+	},
+	["CattaliniChilini"] = {
+		Tier = "Uncommon",
+		Health = 190,
+		Damage = 35,
+		Resistance = 10,
+		Endurance = 85,
+	},
+	["ChillinFormaggino"] = {
+		Tier = "Uncommon",
+		Health = 220,
+		Damage = 33,
+		Resistance = 15,
+		Endurance = 80,
+	},
+	-- GOLD (Display names - 2 same commons merged)
+	["Gold Banana Dancana"] = {
+		Tier = "Gold",
+		Health = 180,
+		Damage = 28,
+		Resistance = 10,
+		Endurance = 75,
+	},
+	["Gold Pandaccini Bananini"] = {
+		Tier = "Gold",
+		Health = 200,
+		Damage = 30,
+		Resistance = 11,
+		Endurance = 80,
+	},
+	["Gold Nyannini Cattalini"] = {
+		Tier = "Gold",
+		Health = 170,
+		Damage = 35,
+		Resistance = 9,
+		Endurance = 85,
+	},
+	["Gold Pipi Potato"] = {
+		Tier = "Gold",
+		Health = 210,
+		Damage = 22,
+		Resistance = 14,
+		Endurance = 70,
+	},
+	["Gold Tim Cheese"] = {
+		Tier = "Gold",
+		Health = 190,
+		Damage = 30,
+		Resistance = 13,
+		Endurance = 78,
+	},
+	["Gold Chillin Chili"] = {
+		Tier = "Gold",
+		Health = 220,
+		Damage = 38,
+		Resistance = 16,
+		Endurance = 72,
+	},
+	-- GOLD (IDs for lookup)
+	["GoldBananaDancana"] = {
+		Tier = "Gold",
+		Health = 180,
+		Damage = 28,
+		Resistance = 10,
+		Endurance = 75,
+	},
+	["GoldPandacciniBananini"] = {
+		Tier = "Gold",
+		Health = 200,
+		Damage = 30,
+		Resistance = 11,
+		Endurance = 80,
+	},
+	["GoldNyanniniCattalini"] = {
+		Tier = "Gold",
+		Health = 170,
+		Damage = 35,
+		Resistance = 9,
+		Endurance = 85,
+	},
+	["GoldPipiPotato"] = {
+		Tier = "Gold",
+		Health = 210,
+		Damage = 22,
+		Resistance = 14,
+		Endurance = 70,
+	},
+	["GoldTimCheese"] = {
+		Tier = "Gold",
+		Health = 190,
+		Damage = 30,
+		Resistance = 13,
+		Endurance = 78,
+	},
+	["GoldChillinChili"] = {
+		Tier = "Gold",
+		Health = 220,
+		Damage = 38,
+		Resistance = 16,
+		Endurance = 72,
+	},
+	-- NPC
+	["NPC_Common_1"] = {
+		Tier = "Common",
+		Health = 80,
+		Damage = 10,
+		Resistance = 3,
+		Endurance = 40,
+	},
+	["NPC_Common_2"] = {
+		Tier = "Common",
+		Health = 85,
+		Damage = 12,
+		Resistance = 4,
+		Endurance = 42,
+	},
+	["NPC_Uncommon_1"] = {
+		Tier = "Uncommon",
+		Health = 160,
+		Damage = 25,
+		Resistance = 10,
+		Endurance = 45,
+	},
+	["NPC_Uncommon_2"] = {
+		Tier = "Uncommon",
+		Health = 150,
+		Damage = 28,
+		Resistance = 8,
+		Endurance = 70,
+	},
+	["NPC_Rare_1"] = {
+		Tier = "Rare",
+		Health = 250,
+		Damage = 40,
+		Resistance = 15,
+		Endurance = 90,
+	},
+	["NPC_Boss_1"] = {
+		Tier = "Boss",
+		Health = 500,
+		Damage = 60,
+		Resistance = 20,
+		Endurance = 120,
+	},
+}
+
+function BrainrotStats.GetStats(brainrotName)
+	local stats = BrainrotStats[brainrotName]
+	if not stats then
+		warn("[BrainrotStats] No stats found for: " .. tostring(brainrotName) .. " — using defaults")
+		return {
+			Tier = "Common",
+			Health = 100,
+			Damage = 10,
+			Resistance = 5,
+			Endurance = 50,
+		}
+	end
+	return stats
+end
+
+return BrainrotStats
