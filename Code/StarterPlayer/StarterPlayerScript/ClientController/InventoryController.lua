@@ -416,6 +416,26 @@ end
 
 
 ------------------------------------------------
+-- Resolve catalog row for UI (handles legacy slots saved as Model/Name string).
+------------------------------------------------
+local function getBrainrotDisplayContext(storedId)
+	if not storedId or storedId == "" then
+		return nil, nil
+	end
+	local data = Brainrots[storedId]
+	if data then
+		return data, storedId
+	end
+	if Brainrots.ResolveInventoryId then
+		local resolved = Brainrots.ResolveInventoryId(storedId)
+		if resolved and Brainrots[resolved] then
+			return Brainrots[resolved], resolved
+		end
+	end
+	return nil, nil
+end
+
+------------------------------------------------
 -- POPULATE INVENTORY
 ------------------------------------------------
 function populateInventory(inventorySlots, equippedSlots, storageCapacity, equipCapacity)
@@ -454,11 +474,11 @@ function populateInventory(inventorySlots, equippedSlots, storageCapacity, equip
 
 		if brainrotId ~= false and brainrotId ~= nil and brainrotId ~= "" then
 			button:SetAttribute("BrainrotId", brainrotId)
-			local brainrotData = Brainrots[brainrotId]
+			local brainrotData, statsId = getBrainrotDisplayContext(brainrotId)
 			if brainrotData then
 				if nameLabel then nameLabel.Text = brainrotData.Name end
 				if mutationLabel then
-					local stats = BrainrotStats.GetStats(brainrotId)
+					local stats = BrainrotStats.GetStats(statsId)
 					if stats and stats.Tier then
 						mutationLabel.Text = stats.Tier
 					else
@@ -499,11 +519,11 @@ function populateInventory(inventorySlots, equippedSlots, storageCapacity, equip
 			if equippedId ~= false and equippedId ~= nil and equippedId ~= "" then
 				newEquipped:SetAttribute("BrainrotId", equippedId)
 
-				local brainrotData = Brainrots[equippedId]
+				local brainrotData, statsId = getBrainrotDisplayContext(equippedId)
 				if brainrotData then
 					if nameLabel then nameLabel.Text = brainrotData.Name end
 					if mutationLabel then
-						local stats = BrainrotStats.GetStats(equippedId)
+						local stats = BrainrotStats.GetStats(statsId)
 						if stats and stats.Tier then
 							mutationLabel.Text = stats.Tier
 						else

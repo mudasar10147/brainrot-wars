@@ -30,11 +30,13 @@ PurchaseSlot.Parent = Remotes
 
 local Brainrots = require(ReplicatedStorage.Modules.Brainrots.Brainrots)
 
--- Reverse lookup: tool model name -> brainrot id
+-- Reverse lookup: tool model name -> brainrot id (skip module functions like ResolveInventoryId)
 local modelToBrainrotId = {}
 for brainrotId, brainrotData in pairs(Brainrots) do
-	local modelName = brainrotData and brainrotData.Model or brainrotId
-	modelToBrainrotId[modelName] = brainrotId
+	if type(brainrotData) == "table" and brainrotData.Id then
+		local modelName = brainrotData.Model or brainrotId
+		modelToBrainrotId[modelName] = brainrotId
+	end
 end
 
 -- === Helper Functions ===

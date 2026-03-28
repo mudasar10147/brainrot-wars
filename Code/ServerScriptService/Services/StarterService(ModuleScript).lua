@@ -17,12 +17,12 @@ local StarterService = {}
 -- Function to get 3 random starter brainrots
 function StarterService:GetRandomStarters()
 	local pool = {}
-	for id,data in pairs(Brainrots) do
-		if data.Tier == "Common" and data.IsStarter then
-			table.insert(pool,{
+	for id, data in pairs(Brainrots) do
+		if type(data) == "table" and data.Tier == "Common" and data.IsStarter then
+			table.insert(pool, {
 				Id = id,
 				Name = data.Name,
-				Icon = data.Icon
+				Icon = data.Icon,
 			})
 		end
 	end

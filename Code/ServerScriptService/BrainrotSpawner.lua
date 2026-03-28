@@ -15,6 +15,8 @@ local InventoryService = require(game.ServerScriptService.Services.InventoryServ
 local Brainrots = require(ReplicatedStorage.Modules.Brainrots.Brainrots)
 local EnemyConfig = require(ReplicatedStorage.Config.EnemyConfig)
 local BrainrotSpawnConfig = require(ReplicatedStorage.Config.BrainrotSpawnConfig)
+local BattleConfig = require(ReplicatedStorage.Config.BattleConfig)
+local BattleRewardService = require(game.ServerScriptService.Services.BattleRewardService)
 
 -- RemoteEvents
 local ExecuteMove = ReplicatedStorage.Remotes.ExecuteMove
@@ -93,6 +95,18 @@ local function unfreezePlayer(battleData)
 	end
 end
 
+local function teleportPlayerToOriginal(player, battleData)
+	local originalPos = playerOriginalPositions[player]
+	if originalPos and battleData.Character then
+		local humanoidRootPart = battleData.Character:FindFirstChild("HumanoidRootPart")
+		if humanoidRootPart then
+			humanoidRootPart.CFrame = originalPos
+			print("[Battle] Teleported player back to original position")
+		end
+		playerOriginalPositions[player] = nil
+	end
+end
+
 local function endBattle(player, battleData, resultType)
 	print("[Battle] endBattle called with resultType: " .. tostring(resultType))
 	
@@ -105,24 +119,46 @@ local function endBattle(player, battleData, resultType)
 		end
 		spawnedModels[battleData.Character] = nil
 	end
-	
-	unfreezePlayer(battleData)
-	
-	-- Teleport player back to original position
-	local originalPos = playerOriginalPositions[player]
-	if originalPos and battleData.Character then
-		local humanoidRootPart = battleData.Character:FindFirstChild("HumanoidRootPart")
-		if humanoidRootPart then
-			humanoidRootPart.CFrame = originalPos
-			print("[Battle] Teleported player back to original position")
-		end
-		playerOriginalPositions[player] = nil
+
+	local resultSettings = BattleConfig.GetCategory("Result")
+	local useLootPhase = resultType == "Win" and resultSettings and resultSettings.RewardsEnabled == true
+
+	if useLootPhase then
+		unfreezePlayer(battleData)
+		activeBattles[player] = nil
+		BattleEnd:FireClient(player, {
+			Result = resultType,
+			AwaitingLootCollection = true,
+		})
+		BattleRewardService.StartWinRewardPhase(player, battleData, function(p)
+			teleportPlayerToOriginal(p, battleData)
+		end)
+		print("[Battle] Win loot phase started; player returns after collecting all pickups.")
+		return
 	end
-	
+
+	if resultType == "Win" then
+		unfreezePlayer(battleData)
+		activeBattles[player] = nil
+		BattleEnd:FireClient(player, {
+			Result = resultType,
+			AwaitingLootCollection = false,
+		})
+		BattleRewardService.StartWinRewardPhase(player, battleData, function(p)
+			teleportPlayerToOriginal(p, battleData)
+		end)
+		print("[Battle] Win (no scatter): rewards applied, returning to world.")
+		return
+	end
+
+	unfreezePlayer(battleData)
+	teleportPlayerToOriginal(player, battleData)
+
 	BattleEnd:FireClient(player, {
-		Result = resultType
+		Result = resultType,
+		AwaitingLootCollection = false,
 	})
-	
+
 	activeBattles[player] = nil
 	print("[Battle] Battle ended! Result: " .. tostring(resultType))
 end

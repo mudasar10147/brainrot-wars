@@ -19,7 +19,8 @@ local diamondTemplate = gui:WaitForChild("DiamondIconTemplate")
 
 local ValuableCollected = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("ValuableCollected")
 
-local function FlyCoin(worldPos, valuableType)
+-- amount: optional (from server); reserved for future UI (e.g. +N flyout text)
+local function FlyCoin(worldPos, valuableType, amount)
 	
 	local icon
 	

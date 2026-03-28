@@ -22,7 +22,16 @@ BattleConfig.Settings = {
 	},
 	
 	Result = {
-		RewardsEnabled = false,
+		RewardsEnabled = true,
+		WinGold = 40,
+		WinDiamonds = 3,
+		GoldPickupCount = 8,
+		DiamondPickupCount = 3,
+		LootScatterRadius = 12,
+		LootHeightOffset = 2,
+		BrainrotDropChance = 0.25,
+		BrainrotDropPool = {},
+		UseEnemyBrainrotForDrop = true,
 		DefaultWinRewards = {},
 		DefaultLoseRewards = {},
 	},

@@ -471,6 +471,9 @@ BattleEnd.OnClientEvent:Connect(function(data)
 	
 	if data.Result == "Win" then
 		print("[BattleUIController] WIN detected! Showing wonFrame...")
+		if data.AwaitingLootCollection then
+			print("[BattleUIController] Collect all gold and diamond pickups in the arena before you return!")
+		end
 		lostFrame.Visible = false
 		drawFrame.Visible = false
 		animateResultFrame(wonFrame)

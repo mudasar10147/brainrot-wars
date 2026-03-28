@@ -98,4 +98,24 @@ local Brainrots = {
 		IsStarter = false
 	},
 }
+
+-- Map spawn/model display strings (e.g. "Banana Dancana") to inventory key (e.g. "BananaDancana").
+function Brainrots.ResolveInventoryId(candidate)
+	if type(candidate) ~= "string" or candidate == "" then
+		return nil
+	end
+	local direct = Brainrots[candidate]
+	if type(direct) == "table" and direct.Id then
+		return direct.Id
+	end
+	for _, data in pairs(Brainrots) do
+		if type(data) == "table" and data.Id then
+			if data.Id == candidate or data.Name == candidate or data.Model == candidate then
+				return data.Id
+			end
+		end
+	end
+	return nil
+end
+
 return Brainrots
